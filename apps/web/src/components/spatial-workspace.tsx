@@ -254,6 +254,10 @@ export function SpatialWorkspace({
             </div>
           </ContainerScroll>
         </div>
+        <p className="mx-auto max-w-3xl border-t border-border/60 py-3 text-[10px] leading-5 text-muted-foreground">
+          <span className="mr-2 font-mono tracking-[0.16em] text-accent uppercase">Small print / 00 → 01</span>
+          無料枠で運用しているので、利用量は少しだけ考えてね。WAFも入れてあるから、連打しなければ大丈夫です。
+        </p>
         </section>
 
         <section className="border-t border-foreground" id="question-lab">
