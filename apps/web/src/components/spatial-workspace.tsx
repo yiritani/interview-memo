@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CardBody, CardContainer, CardItem } from "@/components/aceternity/3d-card";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import { DraggableCardBoard, type DraggableCardItem } from "@/components/aceternity/draggable-card";
 import { Terminal } from "@/components/aceternity/terminal";
 import { OrbitField } from "@/components/aceternity/orbit-field";
 import { Spotlight } from "@/components/aceternity/spotlight";
@@ -33,7 +32,6 @@ const workflowSteps = [
   { id: "review", number: "04", label: "REVIEW", title: "記録を確認" },
   { id: "reverse-questions", number: "05", label: "REVERSE", title: "逆質問" },
   { id: "community", number: "06", label: "OPEN", title: "Issue / PR" },
-  { id: "last-call", number: "07", label: "GO", title: "準備へ" },
 ] as const;
 
 const appGuideCommands = [
@@ -51,12 +49,6 @@ const appGuideOutputs: Record<number, string[]> = {
   3: ["質問ごとに回答メモを保存し、回答文を整える"],
   4: ["応募者から聞きたい逆質問まで準備する"],
 };
-
-const draggableCards: DraggableCardItem[] = [
-  { id: "company", eyebrow: "01 / company", title: "会社情報を読む", detail: "求人票を材料にする", marker: "01", rotate: -7, positionClass: "left-[5%] top-[8%]" },
-  { id: "answer", eyebrow: "02 / answer", title: "回答を磨く", detail: "メモから言葉にする", marker: "02", rotate: 5, positionClass: "right-[4%] top-[26%]" },
-  { id: "reverse", eyebrow: "03 / reverse", title: "逆質問を選ぶ", detail: "最後の一手を準備する", marker: "03", rotate: -2, positionClass: "left-[16%] bottom-[8%]" },
-];
 
 function WorkflowProgress({
   activeSectionId,
@@ -457,31 +449,6 @@ export function SpatialWorkspace({
                 </div>
               </div>
             </div>
-          </div>
-          <div className="mt-12 border-t border-border pt-8">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">Loose end / draggable</p>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-                  下のカードはつかんで動かせます。準備の合間に少し遊べるようにしてありますが、ほどほどに。
-                </p>
-              </div>
-              <span className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">3 objects / drag freely</span>
-            </div>
-            <div className="mt-6">
-              <DraggableCardBoard cards={draggableCards} />
-            </div>
-          </div>
-        </section>
-
-        <section aria-labelledby="last-call-title" className="workflow-section workflow-section--content border-t border-foreground py-10 sm:py-14" data-workflow-section id="last-call">
-          <div className="border-y border-foreground py-10 sm:py-14">
-            <p className="font-mono text-[10px] tracking-[0.18em] text-accent uppercase">Last line / 07</p>
-            <h2 id="last-call-title" className="mt-5 max-w-5xl text-[clamp(2.8rem,8vw,8rem)] leading-[0.86] font-semibold tracking-[-0.09em]">
-              遊んでないで
-              <br />
-              <span className="text-accent">転職準備しなよ。</span>
-            </h2>
           </div>
         </section>
 
