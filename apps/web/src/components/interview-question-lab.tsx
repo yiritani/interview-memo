@@ -9,6 +9,7 @@ import { AnswerAiActions } from "@/components/answer-ai-actions";
 import { AiUsageMeter } from "@/components/ai-usage-meter";
 import { MultiStepLoader } from "@/components/ui/multi-step-loader";
 import { Textarea } from "@/components/ui/textarea";
+import { AI_INPUT_LIMITS } from "@/lib/ai-limits";
 import { APP_AI_DAILY_REQUEST_LIMIT, canStartAiRequest, getAiNeuronTotal, getAiRequestBudgetMessage, getAiRequestCount, recordAiNeurons, recordAiRequest, subscribeToAiNeuronTotal, subscribeToAiRequestCount } from "@/lib/ai-meter";
 import type { AiResponse, AiUsage } from "@/lib/ai-types";
 import { readApiJson } from "@/lib/api-response";
@@ -265,12 +266,16 @@ export function InterviewQuestionLab({
     setAiError("");
 
     try {
+      const reverseTarget = JSON.stringify(questions.map((item) => ({
+        question: item.question.slice(0, 700),
+        answer: (generatedAnswers[item.id] ?? answers[item.id] ?? "").slice(0, 800),
+      })));
       const response = await api.api.ai.generate.$post({
         json: {
           career,
           company: companyContext,
           mode,
-          target: mode === "reverse_questions" ? JSON.stringify(questions.map((item) => ({ question: item.question, answer: generatedAnswers[item.id] ?? answers[item.id] ?? "" }))) : "",
+          target: mode === "reverse_questions" ? reverseTarget : "",
         },
       });
       const body = await readApiJson(response);
@@ -325,8 +330,8 @@ export function InterviewQuestionLab({
         <p className="font-mono text-xs text-accent">01 / COMPANY</p>
         <h3 className="mt-3 text-xl font-medium">受ける会社を知る</h3>
         <p className="mt-3 text-sm text-muted-foreground">会社概要や求人票を貼り付けてください。質問・回答・逆質問を考える材料にします。</p>
-        <Textarea aria-label="受ける会社や求人の情報" className="mt-4 min-h-32 bg-surface" onChange={(event) => setCompanyContext(event.target.value)} placeholder="事業、募集背景、求める経験、開発体制、利用技術など" value={companyContext} />
-        <p className="mt-2 text-xs text-muted-foreground">AIへの送信は生成・補助・採点ボタンを押した時だけ。会社情報は後から追記できます。</p>
+        <Textarea aria-label="受ける会社や求人の情報" className="mt-4 min-h-32 bg-surface" maxLength={AI_INPUT_LIMITS.company} onChange={(event) => setCompanyContext(event.target.value)} placeholder="事業、募集背景、求める経験、開発体制、利用技術など" value={companyContext} />
+        <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground"><span>AIへの送信は生成・補助・採点ボタンを押した時だけ。会社情報は後から追記できます。</span><span className="shrink-0 font-mono">{companyContext.length.toLocaleString()} / {AI_INPUT_LIMITS.company.toLocaleString()}文字</span></div>
       </section>
       <section className="workflow-section workflow-section--content min-w-0" data-workflow-section id="career-input">
         <div className="flex items-center gap-2 text-xs tracking-[0.16em] text-muted-foreground uppercase">
@@ -344,12 +349,13 @@ export function InterviewQuestionLab({
         <Textarea
           aria-label="これまでの経歴"
           className="mt-7 min-h-56 bg-surface"
+          maxLength={AI_INPUT_LIMITS.career}
           onChange={(event) => setCareer(event.target.value)}
           placeholder="・プロダクトや担当領域\n・使った技術\n・数字で表せる成果\n・チームでの役割"
           value={career}
         />
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <span className="font-mono text-xs text-muted-foreground">{parseKeywords(career).length} signals / draft</span>
+          <span className="font-mono text-xs text-muted-foreground">{parseKeywords(career).length} signals / draft · {career.length.toLocaleString()} / {AI_INPUT_LIMITS.career.toLocaleString()}文字</span>
           <Button disabled={aiState === "generating" || !career.trim() || aiRequestCount >= APP_AI_DAILY_REQUEST_LIMIT} onClick={() => void generateWithAi("interview_questions")} type="button">
             {aiState === "generating" && aiMode === "interview_questions" ? "質問を生成中…" : "AIで想定質問を生成する"}<ArrowUpRight />
           </Button>
@@ -397,10 +403,12 @@ export function InterviewQuestionLab({
                   <Textarea
                     aria-label={`${question.category}の回答メモ`}
                     className="min-h-28 bg-background/70 text-sm leading-6 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-[4px_4px_0_var(--shadow)] focus:-translate-y-0.5 focus:shadow-[6px_6px_0_var(--shadow)]"
+                    maxLength={AI_INPUT_LIMITS.answer}
                     onChange={(event) => setAnswer(question.id, event.target.value)}
                     placeholder="回答の材料を箇条書きで。担当したこと・自分の判断・成果など"
                     value={answers[question.id] ?? ""}
                   />
+                  <p className="mt-1 text-right font-mono text-[10px] text-muted-foreground">{(answers[question.id] ?? "").length.toLocaleString()} / {AI_INPUT_LIMITS.answer.toLocaleString()}文字</p>
 
                 </div>
                 <AnswerAiActions

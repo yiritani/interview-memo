@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { interviewAnswers } from "@repo/db/schema";
 import type { AiMode } from "@/lib/ai-types";
 import { getDb } from "@/lib/db";
+import { AI_INPUT_LIMITS } from "@/lib/ai-limits";
 import { generateAiResponse } from "@/server/ai";
 import { allowAiRequest } from "@/server/security";
 import { z } from "zod";
@@ -16,12 +17,12 @@ const answerSchema = z.object({
 
 const aiSchema = z.object({
   mode: z.enum(["interview_questions", "reverse_questions", "rewrite_answer", "answer_support", "score_answer"] satisfies [AiMode, ...AiMode[]]),
-  career: z.string().max(12_000, "経歴は12,000文字以内で入力してください"),
-  company: z.string().max(12_000, "会社情報は12,000文字以内で入力してください"),
-  target: z.string().max(10_000, "対象テキストは10,000文字以内で入力してください"),
+  career: z.string().max(AI_INPUT_LIMITS.career, `経歴は${AI_INPUT_LIMITS.career.toLocaleString()}文字以内で入力してください`),
+  company: z.string().max(AI_INPUT_LIMITS.company, `会社情報は${AI_INPUT_LIMITS.company.toLocaleString()}文字以内で入力してください`),
+  target: z.string().max(AI_INPUT_LIMITS.target, `対象テキストは${AI_INPUT_LIMITS.target.toLocaleString()}文字以内で入力してください`),
 }).superRefine((payload, context) => {
-  if (payload.career.length + payload.company.length + payload.target.length > 30_000) {
-    context.addIssue({ code: "custom", message: "入力内容が大きすぎます。要点を30,000文字以内に絞ってください" });
+  if (payload.career.length + payload.company.length + payload.target.length > AI_INPUT_LIMITS.promptTotal) {
+    context.addIssue({ code: "custom", message: `入力内容が大きすぎます。要点を${AI_INPUT_LIMITS.promptTotal.toLocaleString()}文字以内に絞ってください` });
   }
 });
 
