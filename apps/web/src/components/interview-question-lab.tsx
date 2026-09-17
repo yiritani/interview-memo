@@ -219,6 +219,11 @@ export function InterviewQuestionLab({
     return scored.sort((left, right) => right.score - left.score || left.id.localeCompare(right.id)).slice(0, 6);
   }, [availableTemplates, normalizedCareer, generatedQuestions, initialAnswers]);
 
+  const useCubeNet = questions.length >= cubeNetPositions.length;
+  const questionGridClassName = useCubeNet
+    ? "xl:auto-rows-auto xl:grid-cols-[repeat(4,minmax(0,1fr))]"
+    : "xl:grid-cols-3";
+
   const bulletCount = submittedCareer
     .split("\n")
     .map((line) => line.trim())
@@ -382,10 +387,10 @@ export function InterviewQuestionLab({
         </div>
 
         {questions.length === 0 ? <p className="py-8 text-sm text-muted-foreground">会社情報と経歴を入力して、想定質問を生成してください。質問ごとにメモを書き、回答文を作れます。</p> : null}
-        <div className="relative grid min-w-0 gap-5 pt-6 md:grid-cols-2 xl:auto-rows-auto xl:grid-cols-[repeat(4,minmax(0,1fr))]">
-          <div className="pointer-events-none absolute inset-x-0 top-[calc(50%+10px)] hidden border-t border-dashed border-accent/20 xl:block" />
+        <div className={cn("relative grid min-w-0 gap-5 pt-6 md:grid-cols-2", questionGridClassName)}>
+          {useCubeNet ? <div className="pointer-events-none absolute inset-x-0 top-[calc(50%+10px)] hidden border-t border-dashed border-accent/20 xl:block" /> : null}
           {questions.map((question, index) => (
-            <article className={cn("question-card relative z-10 h-full min-w-0 w-full", cubeNetPositions[index])} key={question.id}>
+            <article className={cn("question-card relative z-10 h-full min-w-0 w-full", useCubeNet ? cubeNetPositions[index] : null)} key={question.id}>
               <div className="flex h-full min-h-[540px] w-full min-w-0 flex-col border border-foreground bg-surface p-5 shadow-[8px_9px_0_var(--shadow)] xl:min-h-0">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
