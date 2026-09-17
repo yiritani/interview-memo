@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>Interview Memo</title>
+  <rect width="64" height="64" rx="12" fill="#201e1a" />
+  <path d="M32 9 54 21.5v21L32 55 10 42.5v-21L32 9Z" fill="#c85634" />
+  <path d="M32 9v23.5m0 0L10 21.5m22 11L54 21.5M32 32.5V55" fill="none" stroke="#fff8ee" stroke-linejoin="round" stroke-width="3" />
+  <path d="m18 26 14 8 14-8" fill="none" opacity=".35" stroke="#201e1a" stroke-width="2" />
+</svg>
