@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "interview-memo-ai-local",
+  "compatibility_date": "2026-09-16",
+  "ai": { "binding": "AI", "remote": true }
+}

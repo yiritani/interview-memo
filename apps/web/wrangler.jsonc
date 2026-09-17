@@ -1,0 +1,30 @@
+// Generated from infra Terraform outputs. Run pnpm infra:sync after apply.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "account_id": "669fc6a29702bb8ca1a14f93c1fd8a4a",
+  "ai": {
+    "binding": "AI"
+  },
+  "assets": {
+    "not_found_handling": "none"
+  },
+  "compatibility_date": "2026-09-16",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "3d50f1af-af86-4d83-b678-5b57d1aa44ce",
+      "database_name": "interview-memo",
+      "migrations_dir": "../../packages/db/drizzle"
+    }
+  ],
+  "main": "vinext/server/app-router-entry",
+  "name": "interview-memo-web",
+  "observability": {
+    "enabled": true
+  },
+  "preview_urls": false,
+  "workers_dev": true
+}

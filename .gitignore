@@ -1,0 +1,31 @@
+node_modules
+.pnpm-store
+.turbo
+.next
+dist
+out
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Cloudflare / Wrangler
+.wrangler
+cloudflare-env.d.ts
+
+# Local database data
+data/libsql
+
+# IDE
+.idea
+.DS_Store
+
+# Terraform: commit the provider lockfile, never credentials/state/plans.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log

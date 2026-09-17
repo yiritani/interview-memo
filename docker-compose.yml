@@ -1,0 +1,12 @@
+services:
+  db:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    platform: linux/amd64
+    environment:
+      SQLD_NODE: primary
+      SQLD_HTTP_LISTEN_ADDR: 0.0.0.0:8080
+      SQLD_GRPC_LISTEN_ADDR: 0.0.0.0:5001
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - ./data/libsql:/var/lib/sqld

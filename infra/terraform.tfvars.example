@@ -1,0 +1,4 @@
+account_id          = "replace-with-your-32-character-account-id"
+worker_name         = "interview-memo-web"
+database_name       = "interview-memo"
+workers_dev_enabled = true
