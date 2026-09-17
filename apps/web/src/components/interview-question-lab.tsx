@@ -369,7 +369,7 @@ export function InterviewQuestionLab({
         ) : null}
       </section>
 
-      <section className="workflow-section workflow-section--content workflow-section--tall min-w-0 xl:relative xl:left-1/2 xl:w-screen xl:-translate-x-1/2 xl:px-8 2xl:px-16" data-workflow-section id="question-workspace">
+      <section className="workflow-section workflow-section--content workflow-section--tall min-w-0" data-workflow-section id="question-workspace">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-foreground pb-5">
           <div>
             <p className="font-mono text-[11px] tracking-[0.16em] text-accent uppercase">03 / Questions / {String(questions.length).padStart(2, "0")}</p>

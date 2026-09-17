@@ -152,7 +152,7 @@ export function SpatialWorkspace({
       <WorkflowProgress activeSectionId={activeSectionId} onNavigate={navigateToSection} />
       <Spotlight className="-top-12 left-1/2 h-[680px] w-[1100px] -translate-x-1/2" />
 
-      <div className="relative mx-auto max-w-7xl px-5 pb-16 sm:px-8 lg:px-12">
+      <div className="relative mx-auto max-w-[1600px] px-5 pb-16 sm:px-8 lg:px-12">
         <section className="workflow-section workflow-section--intro" data-workflow-section id="intro">
         <header className="flex items-center justify-between border-b border-border/80 py-5 text-xs tracking-[0.18em] text-muted-foreground uppercase">
           <div className="flex items-center gap-3 text-foreground">
