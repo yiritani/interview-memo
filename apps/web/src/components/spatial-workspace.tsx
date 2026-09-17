@@ -346,7 +346,7 @@ export function SpatialWorkspace({
                 書いておく。
               </h2>
               <p className="mt-6 max-w-md text-sm leading-6 text-muted-foreground">
-                このアプリは、IT エンジニアが設計・実装・改善しています。技術スタックを暗唱するだけでは味気ないので、なぜ選んだかも少しだけ残します。
+                このアプリは、IT エンジニアが設計・実装・改善しています。Aceternity UIの動きと3D CSSの奥行きを使いたくて、面接準備アプリを作り始めました。技術スタックを暗唱するだけでは味気ないので、なぜ選んだかも少しだけ残します。
               </p>
               <div className="mt-8 border-l-2 border-accent pl-4 text-xs leading-5 text-muted-foreground">
                 <p className="text-foreground">無料枠を大切に運用中</p>
@@ -369,6 +369,11 @@ export function SpatialWorkspace({
                 <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">AI / next</p>
                 <p className="mt-3 text-sm leading-6">質問の組立、回答の補助、回答内容の採点を、ボタン操作で必要な時だけ実行します。</p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">常時しゃべる AI は少し落ち着きがないので、呼ばれた時だけ働く方針です。</p>
+              </div>
+              <div className="border-t border-border pt-4">
+                <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">UI / depth</p>
+                <p className="mt-3 text-sm leading-6">Aceternity UI / Motion / 3D CSS</p>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">平らな管理画面を作るより、奥行きのあるUIを触りながら面接の記憶を組み立てたかったので、この形にしました。</p>
               </div>
               <div className="border-t border-accent/50 pt-4 sm:col-span-2">
                 <div className="flex flex-wrap items-center justify-between gap-3">
