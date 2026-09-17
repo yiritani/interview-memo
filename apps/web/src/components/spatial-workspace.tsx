@@ -177,7 +177,7 @@ export function SpatialWorkspace({
             </a>
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-6">
-            PRを受け付けたい。でも、個人情報を抜かれるのは嫌なので、ログインは設けません。変更はGitHub上で読める状態にします。
+            issue, PR作成受け付けます。詳細はページ下部にありますが、とりあえず一回使ってみてください。
           </p>
         </section>
 
@@ -362,7 +362,7 @@ export function SpatialWorkspace({
               </div>
               <div className="border-t border-border pt-4">
                 <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">Backend / typed</p>
-                <p className="mt-3 text-sm leading-6">Hono RPC / Drizzle ORM / SQLite / Cloudflare D1 予定</p>
+                <p className="mt-3 text-sm leading-6">Hono / Drizzle / Cloudflare D1</p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">Hono RPC はフロントと API の口約束を型にします。口約束だけで本番へ行くと、だいたい後で会議が増えます。</p>
               </div>
               <div className="border-t border-border pt-4">
@@ -380,7 +380,7 @@ export function SpatialWorkspace({
                 </div>
                 <p className="mt-3 max-w-2xl text-sm leading-6">
                   PRを受け付けたい。でも、個人情報を抜かれるのは嫌なので、ログインは設けません。変更はGitHub上で読める状態にします。
-                  個人情報を抜くための改修や、こっそり送信先を増やす改修は受け入れません。
+                  個人情報を抜くための改修や、こっそり送信先を増やす改修は受け入れません。OSSのコミット参加実績にでもしてください。
                 </p>
                 <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">
                   要望やバグはIssueへ。自分で直したくなったらPRへ。投稿には個人情報・認証情報・非公開の求人情報を貼らないでください。
@@ -401,36 +401,6 @@ export function SpatialWorkspace({
                     </span>
                   )}
                 </div>
-              </div>
-              <div className="border-t border-border pt-4" id="feedback">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">要望受け入れフォーム</p>
-                  <span className="text-[10px] text-muted-foreground uppercase">local draft</span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  欲しい機能や使いにくいところを残せます。現在は通信せず、この画面で受け取るところまでです。
-                </p>
-                <form className="mt-4" onSubmit={saveFeedbackDraft}>
-                  <Textarea
-                    aria-label="要望"
-                    className="min-h-24 bg-surface"
-                    onChange={(event) => {
-                      setFeedback(event.target.value);
-                      setFeedbackStatus("idle");
-                    }}
-                    placeholder="例：職務経歴書の出力が欲しい"
-                    value={feedback}
-                  />
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <span aria-live="polite" className="text-[11px] text-accent">
-                      {feedbackStatus === "saved" ? "要望を受け取りました" : null}
-                    </span>
-                    <Button disabled={!feedback.trim()} size="sm" type="submit">
-                      要望を残す
-                      <ArrowUpRight />
-                    </Button>
-                  </div>
-                </form>
               </div>
             </div>
           </div>
