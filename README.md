@@ -36,21 +36,21 @@ pnpm dev:local
 
 会社情報 → 経歴 → 想定質問の生成 → 各質問のメモから回答文を生成 → 比較・補助・採点 → 逆質問の生成、の順に進めます。初回の比較はメモと回答文、再生成時は前回と今回の回答文です。生成履歴は画面を開いている間だけ保持します。
 
-各操作は `/api/ai/generate` を利用します。AI接続が未設定の場合のみ `local-fallback` を返し、接続済みAIの失敗はエラーとして表示します。
+各操作は `/api/ai/generate` を利用します。ローカル開発ではデフォルトで `local-driver` を使い、Cloudflare Workers AIを呼ばずに同じRPC形式の結果を返します。本番または明示的にCloudflareドライバを選んだ場合だけWorkers AIを呼びます。
 
 フロントエンドからの回答保存・取得・削除と AI 生成は、Hono の RPC クライアントを通します。API の実装と型は `apps/web/src/server/app.ts` に集約し、Next.js の `/api/[[...route]]` から Hono を配信しています。ログイン未導入のため、現段階ではローカル環境を共有する単一ワークスペースとして扱います。
 
 ### AI のローカル接続
 
-ローカル Next.js からも Wrangler の OAuth 認証で Workers AI を利用できます。
+ローカル Next.js は、クレジットを消費しないローカルドライバを標準で使います。実際のWorkers AIを試す場合だけ、明示的にCloudflareドライバへ切り替えてください。
 
 1. `pnpm --filter @repo/web exec wrangler login` で認証します。
-2. `apps/web/.env.local` に `CLOUDFLARE_AI_LOCAL=true` を設定します。
+2. `apps/web/.env.local` に `CLOUDFLARE_AI_DRIVER=cloudflare` を設定します。
 3. `pnpm dev:local` を再起動します。
 
 `wrangler.ai.jsonc` のリモートAI bindingだけを接続するため、D1作成やアプリのデプロイは不要です。APIトークンを使う場合は、代わりに `apps/web/.env.local` に `CLOUDFLARE_ACCOUNT_ID` と `CLOUDFLARE_API_TOKEN` を設定します。認証情報はサーバー側でのみ使用します。
 
-モデルは `@cf/meta/llama-3.3-70b-instruct-fp8-fast`。JSON Schemaで応答形式を指定し、出力は最大1800トークンです。AIは明示的なボタン操作時のみ実行し、自動再試行しません。ローカルからの実推論もCloudflareの利用枠を消費します。
+モデルは `@cf/meta/llama-3.3-70b-instruct-fp8-fast`。JSON Schemaで応答形式を指定し、出力は最大1800トークンです。AIは明示的なボタン操作時のみ実行し、自動再試行しません。ローカルドライバはクレジットを消費せず、実推論へ切り替えた時だけCloudflareの利用枠を使います。
 
 AI応答に使用量メタデータが含まれる場合は、画面に入力・出力トークン、合計クレジット、Workers AIの単価から計算した米ドル概算を表示します。Cloudflareアカウント全体の使用量APIは画面から参照せず、`CF requests` はこのブラウザのセッション内で数えたAI生成APIの成功数 / Workers Freeの1日上限という概算として表示します。使用量を返さない応答は「使用量未取得」「料金未計算」と表示します。
 

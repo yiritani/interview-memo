@@ -282,7 +282,7 @@ export function InterviewQuestionLab({
       if (!response.ok || !("items" in body)) {
         throw new Error("error" in body && typeof body.error === "string" ? body.error : "AIの生成に失敗しました");
       }
-      setAiRequestCount(recordAiRequest());
+      if (body.provider === "cloudflare-workers-ai") setAiRequestCount(recordAiRequest());
       setAiNeuronTotal(recordAiNeurons(body.usage?.neurons));
 
       if (mode === "interview_questions") {
@@ -292,7 +292,7 @@ export function InterviewQuestionLab({
         setGeneratedQuestions(body.items.map((item) => ({
           id: `ai-${crypto.randomUUID()}`, category: item.title, stage: "all",
           question: item.body, intent: "自分の経験や判断を、具体的な事実で伝えましょう。",
-          keywords: [], sourceName: body.provider === "local-fallback" ? "ローカル簡易生成" : "AI生成",
+          keywords: [], sourceName: body.provider === "local-driver" || body.provider === "local-fallback" ? "ローカルドライバ" : "AI生成",
         })));
       } else {
         setAiResult(body);
@@ -363,7 +363,7 @@ export function InterviewQuestionLab({
         <p aria-live="polite" className="mt-3 text-xs text-accent">{aiMode === "interview_questions" && aiState === "error" ? aiError : questionSummary}</p>
         {aiMode === "interview_questions" && questionSummary ? (
           <div className="mt-4 space-y-2">
-            <p className="text-[10px] text-muted-foreground">{aiUsage ? "Workers AI / 使用量を受け取りました" : "AI / 使用量メタデータなし"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
+            <p className="text-[10px] text-muted-foreground">{aiUsage ? "Workers AI / 使用量を受け取りました" : "Local driver / クレジット消費なし"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
             <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={aiUsage} />
           </div>
         ) : null}
@@ -489,7 +489,7 @@ export function InterviewQuestionLab({
         <div aria-live="polite" className="mt-4">
           {aiMode === "reverse_questions" && aiState === "error" ? <p className="text-xs text-destructive">{aiError}</p> : null}
           {aiResult ? <>
-            <p className="mb-2 text-[10px] text-muted-foreground">{aiResult.provider === "local-fallback" ? "ローカル簡易結果" : "Workers AI / 使用量を受け取りました"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
+            <p className="mb-2 text-[10px] text-muted-foreground">{aiResult.provider === "local-driver" || aiResult.provider === "local-fallback" ? "Local driver / クレジット消費なし" : "Workers AI / 使用量を受け取りました"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
             <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={aiResult.usage} />
             <p className="text-xs leading-6 text-muted-foreground">{aiResult.summary}</p>
             {aiResult.items.map((item, index) => <div className="mt-4 border-t border-border pt-4" key={index}><h4 className="text-sm font-medium">{item.title}</h4><p className="mt-2 text-sm leading-6">{item.body}</p></div>)}

@@ -24,7 +24,7 @@ export type AiUsage = {
 
 export type AiResponse = {
   mode: AiMode;
-  provider: "cloudflare-workers-ai" | "local-fallback";
+  provider: "cloudflare-workers-ai" | "local-driver" | "local-fallback";
   summary: string;
   items: AiItem[];
   usage?: AiUsage;

@@ -67,7 +67,7 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
       if (!response.ok || !("items" in body)) {
         throw new Error("error" in body && typeof body.error === "string" ? body.error : "入力内容を確認して、もう一度お試しください。");
       }
-      setAiRequestCount(recordAiRequest());
+      if (body.provider === "cloudflare-workers-ai") setAiRequestCount(recordAiRequest());
       setAiNeuronTotal(recordAiNeurons(body.usage?.neurons));
       if (mode === "rewrite_answer") {
         const after = body.items[0]?.body?.trim();
@@ -174,7 +174,7 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
               <summary className="cursor-pointer text-xs font-medium text-accent">{label} / 結果</summary>
               {stale ? <p className="mt-2 text-xs text-accent">入力が変更されています。最新の内容で確認するには再実行してください。</p> : null}
               <p className="mt-2 text-[10px] text-muted-foreground">
-                {result.response.provider === "local-fallback" ? "ローカル簡易結果（AI未接続）" : "AIによる提案"}
+                {result.response.provider === "local-driver" || result.response.provider === "local-fallback" ? "Local driver / クレジット消費なし" : "AIによる提案"}
               </p>
               <div className="mt-3">
                 <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={result.response.usage} />
