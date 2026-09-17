@@ -5,6 +5,7 @@ import { interviewAnswers } from "@repo/db/schema";
 import type { AiMode } from "@/lib/ai-types";
 import { getDb } from "@/lib/db";
 import { generateAiResponse } from "@/server/ai";
+import { allowAiRequest } from "@/server/security";
 import { z } from "zod";
 
 const answerSchema = z.object({
@@ -15,9 +16,13 @@ const answerSchema = z.object({
 
 const aiSchema = z.object({
   mode: z.enum(["interview_questions", "reverse_questions", "rewrite_answer", "answer_support", "score_answer"] satisfies [AiMode, ...AiMode[]]),
-  career: z.string().max(20_000),
-  company: z.string().max(20_000),
-  target: z.string().max(20_000),
+  career: z.string().max(12_000, "経歴は12,000文字以内で入力してください"),
+  company: z.string().max(12_000, "会社情報は12,000文字以内で入力してください"),
+  target: z.string().max(10_000, "対象テキストは10,000文字以内で入力してください"),
+}).superRefine((payload, context) => {
+  if (payload.career.length + payload.company.length + payload.target.length > 30_000) {
+    context.addIssue({ code: "custom", message: "入力内容が大きすぎます。要点を30,000文字以内に絞ってください" });
+  }
 });
 
 const app = new Hono()
@@ -127,6 +132,14 @@ const app = new Hono()
   })
   .post("/ai/generate", zValidator("json", aiSchema), async (context) => {
     const payload = context.req.valid("json");
+
+    if (!(await allowAiRequest(context.req.raw))) {
+      return context.json(
+        { error: "AIは一度に働きすぎない設計です。1分ほど休憩してから、もう一度どうぞ。" },
+        429,
+        { "Retry-After": "60" },
+      );
+    }
 
     try {
       return context.json(await generateAiResponse(payload));

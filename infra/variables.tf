@@ -22,3 +22,13 @@ variable "workers_dev_enabled" {
   type        = bool
   default     = true
 }
+
+variable "cloudflare_zone_id" {
+  description = "Optional zone ID for a Terraform-managed WAF rate limit. Leave empty while using workers.dev."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.cloudflare_zone_id == "" || can(regex("^[a-f0-9]{32}$", var.cloudflare_zone_id))
+    error_message = "cloudflare_zone_id must be empty or a 32-character Cloudflare zone ID."
+  }
+}

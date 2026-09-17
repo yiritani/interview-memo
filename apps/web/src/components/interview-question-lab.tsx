@@ -9,7 +9,7 @@ import { AnswerAiActions } from "@/components/answer-ai-actions";
 import { AiUsageMeter } from "@/components/ai-usage-meter";
 import { MultiStepLoader } from "@/components/ui/multi-step-loader";
 import { Textarea } from "@/components/ui/textarea";
-import { getAiNeuronTotal, getAiRequestCount, recordAiNeurons, recordAiRequest, subscribeToAiNeuronTotal, subscribeToAiRequestCount } from "@/lib/ai-meter";
+import { APP_AI_DAILY_REQUEST_LIMIT, canStartAiRequest, getAiNeuronTotal, getAiRequestBudgetMessage, getAiRequestCount, recordAiNeurons, recordAiRequest, subscribeToAiNeuronTotal, subscribeToAiRequestCount } from "@/lib/ai-meter";
 import type { AiResponse, AiUsage } from "@/lib/ai-types";
 import { readApiJson } from "@/lib/api-response";
 import { cn } from "@/lib/utils";
@@ -255,6 +255,11 @@ export function InterviewQuestionLab({
   };
 
   const generateWithAi = async (mode: QuestionAiMode) => {
+    if (!canStartAiRequest()) {
+      setAiState("error");
+      setAiError(getAiRequestBudgetMessage());
+      return;
+    }
     setAiMode(mode);
     setAiState("generating");
     setAiError("");
@@ -268,11 +273,11 @@ export function InterviewQuestionLab({
           target: mode === "reverse_questions" ? JSON.stringify(questions.map((item) => ({ question: item.question, answer: generatedAnswers[item.id] ?? answers[item.id] ?? "" }))) : "",
         },
       });
-      setAiRequestCount(recordAiRequest());
       const body = await readApiJson(response);
       if (!response.ok || !("items" in body)) {
         throw new Error("error" in body && typeof body.error === "string" ? body.error : "AIの生成に失敗しました");
       }
+      setAiRequestCount(recordAiRequest());
       setAiNeuronTotal(recordAiNeurons(body.usage?.neurons));
 
       if (mode === "interview_questions") {
@@ -345,14 +350,14 @@ export function InterviewQuestionLab({
         />
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <span className="font-mono text-xs text-muted-foreground">{parseKeywords(career).length} signals / draft</span>
-          <Button disabled={aiState === "generating" || !career.trim()} onClick={() => void generateWithAi("interview_questions")} type="button">
+          <Button disabled={aiState === "generating" || !career.trim() || aiRequestCount >= APP_AI_DAILY_REQUEST_LIMIT} onClick={() => void generateWithAi("interview_questions")} type="button">
             {aiState === "generating" && aiMode === "interview_questions" ? "質問を生成中…" : "AIで想定質問を生成する"}<ArrowUpRight />
           </Button>
         </div>
         <p aria-live="polite" className="mt-3 text-xs text-accent">{aiMode === "interview_questions" && aiState === "error" ? aiError : questionSummary}</p>
         {aiMode === "interview_questions" && questionSummary ? (
           <div className="mt-4 space-y-2">
-            <p className="text-[10px] text-muted-foreground">{aiUsage ? "Workers AI / 使用量を受け取りました" : "AI / 使用量メタデータなし"}</p>
+            <p className="text-[10px] text-muted-foreground">{aiUsage ? "Workers AI / 使用量を受け取りました" : "AI / 使用量メタデータなし"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
             <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={aiUsage} />
           </div>
         ) : null}
@@ -470,13 +475,13 @@ export function InterviewQuestionLab({
         <p className="font-mono text-xs text-accent">04 / REVERSE QUESTIONS</p>
         <h3 className="mt-3 text-xl font-medium">最後に、こちらから聞きたいことを。</h3>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">会社情報・経歴・準備した回答をもとに、応募者から面接官へ聞く、入社後の期待や働き方を確かめる逆質問を考えます。</p>
-        <Button className="mt-4" disabled={aiState === "generating" || questions.length === 0} onClick={() => void generateWithAi("reverse_questions")} type="button">
+        <Button className="mt-4" disabled={aiState === "generating" || questions.length === 0 || aiRequestCount >= APP_AI_DAILY_REQUEST_LIMIT} onClick={() => void generateWithAi("reverse_questions")} type="button">
           {aiState === "generating" && aiMode === "reverse_questions" ? "逆質問を生成中…" : "AIで逆質問を生成する"}<ArrowUpRight />
         </Button>
         <div aria-live="polite" className="mt-4">
           {aiMode === "reverse_questions" && aiState === "error" ? <p className="text-xs text-destructive">{aiError}</p> : null}
           {aiResult ? <>
-            <p className="mb-2 text-[10px] text-muted-foreground">{aiResult.provider === "local-fallback" ? "ローカル簡易結果" : "Workers AI / 使用量を受け取りました"}</p>
+            <p className="mb-2 text-[10px] text-muted-foreground">{aiResult.provider === "local-fallback" ? "ローカル簡易結果" : "Workers AI / 使用量を受け取りました"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
             <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={aiResult.usage} />
             <p className="text-xs leading-6 text-muted-foreground">{aiResult.summary}</p>
             {aiResult.items.map((item, index) => <div className="mt-4 border-t border-border pt-4" key={index}><h4 className="text-sm font-medium">{item.title}</h4><p className="mt-2 text-sm leading-6">{item.body}</p></div>)}

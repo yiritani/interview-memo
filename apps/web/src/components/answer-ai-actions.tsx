@@ -7,7 +7,7 @@ import { AiUsageMeter } from "@/components/ai-usage-meter";
 import { Button } from "@/components/ui/button";
 import { Compare } from "@/components/ui/compare";
 import { MultiStepLoader } from "@/components/ui/multi-step-loader";
-import { getAiNeuronTotal, getAiRequestCount, recordAiNeurons, recordAiRequest, subscribeToAiNeuronTotal, subscribeToAiRequestCount } from "@/lib/ai-meter";
+import { APP_AI_DAILY_REQUEST_LIMIT, canStartAiRequest, getAiNeuronTotal, getAiRequestBudgetMessage, getAiRequestCount, recordAiNeurons, recordAiRequest, subscribeToAiNeuronTotal, subscribeToAiRequestCount } from "@/lib/ai-meter";
 import type { AiResponse } from "@/lib/ai-types";
 import { readApiJson } from "@/lib/api-response";
 import type { AppType } from "@/server/app";
@@ -50,6 +50,10 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
 
   async function generate(mode: AnswerMode | "rewrite_answer") {
     if (inFlight.current || (mode === "rewrite_answer" ? !answer.trim() : !revision)) return;
+    if (!canStartAiRequest()) {
+      setError(getAiRequestBudgetMessage());
+      return;
+    }
     inFlight.current = true;
     setPending(mode);
     setError("");
@@ -59,11 +63,11 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
           ? JSON.stringify({ question, notes: answer, previousAnswer: revisions.at(-1)?.after ?? "" })
           : `質問:\n${question}\n\n回答:\n${revision.after}` },
       });
-      setAiRequestCount(recordAiRequest());
       const body = await readApiJson(response);
       if (!response.ok || !("items" in body)) {
         throw new Error("error" in body && typeof body.error === "string" ? body.error : "入力内容を確認して、もう一度お試しください。");
       }
+      setAiRequestCount(recordAiRequest());
       setAiNeuronTotal(recordAiNeurons(body.usage?.neurons));
       if (mode === "rewrite_answer") {
         const after = body.items[0]?.body?.trim();
@@ -102,7 +106,7 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
       <p className="mb-3 text-[11px] leading-5 text-muted-foreground">
         メモを、面接でそのまま話せる回答文へ。経歴・会社情報も参考にします。
       </p>
-      <Button disabled={!answer.trim() || pending !== null} onClick={() => void generate("rewrite_answer")} size="sm" type="button">
+      <Button disabled={!answer.trim() || pending !== null || aiRequestCount >= APP_AI_DAILY_REQUEST_LIMIT} onClick={() => void generate("rewrite_answer")} size="sm" type="button">
         {pending === "rewrite_answer" ? <LoaderCircle className="animate-spin" /> : <PencilLine />}
         {pending === "rewrite_answer" ? "回答文を生成中…" : revisions.length ? "回答文を再生成する" : "メモから回答文を生成する"}
       </Button>
@@ -146,7 +150,7 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
         {actions.map(({ mode, label, icon: Icon }) => (
           <Button
             className="text-[11px] motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-[3px_3px_0_var(--shadow)] motion-safe:active:translate-y-0"
-            disabled={!revision || pending !== null}
+            disabled={!revision || pending !== null || aiRequestCount >= APP_AI_DAILY_REQUEST_LIMIT}
             key={mode}
             onClick={() => void generate(mode)}
             size="sm"
@@ -158,6 +162,7 @@ export function AnswerAiActions({ question, answer, career, company, onGenerated
           </Button>
         ))}
       </div>
+      <p className="mt-3 text-[10px] leading-4 text-muted-foreground">AIにも定時があります。1日{APP_AI_DAILY_REQUEST_LIMIT}回まで、ここぞという回答だけ一緒に磨きます。</p>
       <div aria-live="polite" aria-busy={pending !== null}>
         {error ? <p role="alert" className="mt-3 text-xs text-destructive">{error}</p> : null}
         {actions.map(({ mode, label }) => {

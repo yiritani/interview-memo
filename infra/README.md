@@ -22,7 +22,13 @@ pnpm db:migrate:remote
 
 - `cloudflare_d1_database.app`: `interview-memo`。削除防止を有効にしています。
 - `cloudflare_worker.app`: `interview-memo-web`。Workerのidentity、observability、workers.dev公開設定を管理します。
-- `wrangler_config` output: AI binding、D1 binding、アセット設定をアプリのWranglerへ渡します。
+- `wrangler_config` output: AI binding、D1 binding、Rate Limiting binding、アセット設定をアプリのWranglerへ渡します。
+
+## AIの防御
+
+WorkerにはCloudflare Workers Rate Limiting bindingを設定し、AI生成をIP・Cloudflareロケーション単位で1分6回までに絞っています。アプリ側にも当日12回のブラウザガードと入力文字数上限があります。
+
+現在の公開先が `workers.dev` のため、ゾーンに紐づくWAFはまだ適用できません。独自ドメインをCloudflareのゾーンへ接続したら、`terraform.tfvars` の `cloudflare_zone_id` にゾーンIDを設定して `pnpm infra:plan` / `pnpm infra:apply` を実行してください。Terraformが `/api/ai/generate` のWAF rate limitを作成します。既存のゾーンRulesetをTerraformで管理している場合は、先に既存stateへimportしてください。
 
 `workers_dev_enabled = true` で workers.dev の公開URLを有効にしています。独自ドメインを接続する場合は、公開URLを確認してからCloudflareのルート設定を追加してください。
 

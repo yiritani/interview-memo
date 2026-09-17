@@ -15,4 +15,8 @@ run "bindings_and_exposure" {
     condition     = output.wrangler_config.d1_databases[0].database_name == cloudflare_d1_database.app.name && output.wrangler_config.ai.binding == "AI"
     error_message = "Wrangler must use Terraform's D1 and the AI binding."
   }
+  assert {
+    condition     = output.wrangler_config.ratelimits[0].name == "AI_GENERATION_LIMITER" && output.wrangler_config.ratelimits[0].simple.limit == 6 && output.wrangler_config.ratelimits[0].simple.period == 60
+    error_message = "The Worker must expose the edge AI rate limiter binding."
+  }
 }

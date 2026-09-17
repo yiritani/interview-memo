@@ -38,7 +38,12 @@ locals {
     workers_dev         = var.workers_dev_enabled
     preview_urls        = false
     ai                  = { binding = "AI" }
-    assets              = { not_found_handling = "none" }
+    ratelimits = [{
+      name         = "AI_GENERATION_LIMITER"
+      namespace_id = "1001"
+      simple       = { limit = 6, period = 60 }
+    }]
+    assets = { not_found_handling = "none" }
     d1_databases = [{
       binding        = "DB"
       database_name  = cloudflare_d1_database.app.name
