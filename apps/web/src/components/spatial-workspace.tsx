@@ -196,6 +196,9 @@ export function SpatialWorkspace({
                   <p className="mt-8 max-w-md text-base leading-7 text-muted-foreground">
                     IT エンジニアの経歴を、面接で話せる材料に変える。まずは箇条書きから、聞かれる角度を先に見つける。
                   </p>
+                  <p className="mt-5 max-w-lg border-l-2 border-accent pl-4 text-sm leading-6 text-foreground/80">
+                    人材コンサル会社に勤めるITエンジニアが、面接準備の現場で感じた「経歴をうまく質問に変えられない」をきっかけに作っています。
+                  </p>
                 </div>
               </div>
             }
