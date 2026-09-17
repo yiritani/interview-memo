@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CardBody, CardContainer, CardItem } from "@/components/aceternity/3d-card";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import { DraggableCard } from "@/components/aceternity/draggable-card";
+import { DraggableCardBoard, type DraggableCardItem } from "@/components/aceternity/draggable-card";
 import { Terminal } from "@/components/aceternity/terminal";
 import { OrbitField } from "@/components/aceternity/orbit-field";
 import { Spotlight } from "@/components/aceternity/spotlight";
@@ -51,6 +51,12 @@ const appGuideOutputs: Record<number, string[]> = {
   3: ["質問ごとに回答メモを保存し、回答文を整える"],
   4: ["応募者から聞きたい逆質問まで準備する"],
 };
+
+const draggableCards: DraggableCardItem[] = [
+  { id: "company", eyebrow: "01 / company", title: "会社情報を読む", detail: "求人票を材料にする", marker: "01", rotate: -7, positionClass: "left-[5%] top-[8%]" },
+  { id: "answer", eyebrow: "02 / answer", title: "回答を磨く", detail: "メモから言葉にする", marker: "02", rotate: 5, positionClass: "right-[4%] top-[26%]" },
+  { id: "reverse", eyebrow: "03 / reverse", title: "逆質問を選ぶ", detail: "最後の一手を準備する", marker: "03", rotate: -2, positionClass: "left-[16%] bottom-[8%]" },
+];
 
 function WorkflowProgress({
   activeSectionId,
@@ -462,10 +468,8 @@ export function SpatialWorkspace({
               </div>
               <span className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">3 objects / drag freely</span>
             </div>
-            <div className="mt-6 grid gap-5 md:grid-cols-3">
-              <DraggableCard eyebrow="01 / company" title="会社情報を読む" detail="求人票を材料にする" marker="01" />
-              <DraggableCard eyebrow="02 / answer" title="回答を磨く" detail="メモから言葉にする" marker="02" />
-              <DraggableCard eyebrow="03 / reverse" title="逆質問を選ぶ" detail="最後の一手を準備する" marker="03" />
+            <div className="mt-6">
+              <DraggableCardBoard cards={draggableCards} />
             </div>
           </div>
         </section>
