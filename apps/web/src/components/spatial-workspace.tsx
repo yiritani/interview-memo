@@ -277,7 +277,7 @@ export function SpatialWorkspace({
         </p>
         </section>
 
-        <section aria-labelledby="about-app-title" className="border-t border-foreground py-10 sm:py-14">
+        <section aria-labelledby="about-app-title" className="workflow-section workflow-section--content min-w-0 border-t border-foreground py-10 sm:py-14" data-workflow-section id="about">
           <div className="grid gap-8 lg:grid-cols-[0.34fr_0.66fr] lg:gap-14">
             <div>
               <p className="font-mono text-[11px] tracking-[0.18em] text-accent uppercase">System / what it does</p>
