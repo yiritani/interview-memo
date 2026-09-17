@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CardBody, CardContainer, CardItem } from "@/components/aceternity/3d-card";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { Terminal } from "@/components/aceternity/terminal";
 import { OrbitField } from "@/components/aceternity/orbit-field";
 import { Spotlight } from "@/components/aceternity/spotlight";
 import {
@@ -32,6 +33,22 @@ const workflowSteps = [
   { id: "reverse-questions", number: "05", label: "REVERSE", title: "逆質問" },
   { id: "community", number: "06", label: "OPEN", title: "Issue / PR" },
 ] as const;
+
+const appGuideCommands = [
+  "interview-memo --input company",
+  "interview-memo --input career",
+  "interview-memo --generate questions",
+  "interview-memo --draft answers",
+  "interview-memo --prepare reverse",
+];
+
+const appGuideOutputs: Record<number, string[]> = {
+  0: ["会社情報や求人票を、面接準備の材料にする"],
+  1: ["職種・技術・役割・成果を箇条書きで整理する"],
+  2: ["面接官から聞かれそうな深掘り質問を組み立てる"],
+  3: ["質問ごとに回答メモを保存し、回答文を整える"],
+  4: ["応募者から聞きたい逆質問まで準備する"],
+};
 
 function WorkflowProgress({
   activeSectionId,
@@ -258,6 +275,26 @@ export function SpatialWorkspace({
           <span className="mr-2 font-mono tracking-[0.16em] text-accent uppercase">Small print / 00 → 01</span>
           無料枠で運用しているので、利用量は少しだけ考えてね。WAFも入れてあるから、連打しなければ大丈夫です。
         </p>
+        </section>
+
+        <section aria-labelledby="about-app-title" className="border-t border-foreground py-10 sm:py-14">
+          <div className="grid gap-8 lg:grid-cols-[0.34fr_0.66fr] lg:gap-14">
+            <div>
+              <p className="font-mono text-[11px] tracking-[0.18em] text-accent uppercase">System / what it does</p>
+              <h2 id="about-app-title" className="mt-4 text-3xl leading-[0.95] font-medium tracking-[-0.06em] sm:text-5xl">
+                面接準備を、
+                <br />
+                順番に進める。
+              </h2>
+              <p className="mt-6 max-w-sm text-sm leading-6 text-muted-foreground">
+                Interview Memoは、会社情報と自分の経歴を重ねて、質問・回答・逆質問を組み立てるための作業場です。
+              </p>
+              <p className="mt-5 max-w-sm border-l-2 border-accent pl-4 text-xs leading-5 text-muted-foreground">
+                ターミナルのログを眺めるように、いま何を準備しているかを確認できます。急がず、一行ずつどうぞ。
+              </p>
+            </div>
+            <Terminal commands={appGuideCommands} outputs={appGuideOutputs} username="engineer" />
+          </div>
         </section>
 
         <section className="border-t border-foreground" id="question-lab">
