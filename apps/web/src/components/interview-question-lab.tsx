@@ -369,7 +369,7 @@ export function InterviewQuestionLab({
         ) : null}
       </section>
 
-      <section className="workflow-section workflow-section--content workflow-section--tall min-w-0" data-workflow-section id="question-workspace">
+      <section className="workflow-section workflow-section--content workflow-section--tall min-w-0 xl:relative xl:left-1/2 xl:w-screen xl:-translate-x-1/2 xl:px-8 2xl:px-16" data-workflow-section id="question-workspace">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-foreground pb-5">
           <div>
             <p className="font-mono text-[11px] tracking-[0.16em] text-accent uppercase">03 / Questions / {String(questions.length).padStart(2, "0")}</p>
@@ -382,11 +382,11 @@ export function InterviewQuestionLab({
         </div>
 
         {questions.length === 0 ? <p className="py-8 text-sm text-muted-foreground">会社情報と経歴を入力して、想定質問を生成してください。質問ごとにメモを書き、回答文を作れます。</p> : null}
-        <div className="relative grid gap-5 pt-6 md:grid-cols-2 xl:auto-rows-auto xl:grid-cols-4">
+        <div className="relative grid min-w-0 gap-5 pt-6 md:grid-cols-2 xl:auto-rows-auto xl:grid-cols-[repeat(4,minmax(0,1fr))]">
           <div className="pointer-events-none absolute inset-x-0 top-[calc(50%+10px)] hidden border-t border-dashed border-accent/20 xl:block" />
           {questions.map((question, index) => (
-            <article className={cn("question-card relative z-10 h-full", cubeNetPositions[index])} key={question.id}>
-              <div className="flex h-full min-h-[540px] flex-col border border-foreground bg-surface p-5 shadow-[8px_9px_0_var(--shadow)] xl:min-h-0">
+            <article className={cn("question-card relative z-10 h-full min-w-0 w-full", cubeNetPositions[index])} key={question.id}>
+              <div className="flex h-full min-h-[540px] w-full min-w-0 flex-col border border-foreground bg-surface p-5 shadow-[8px_9px_0_var(--shadow)] xl:min-h-0">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">{question.category}</Badge>
