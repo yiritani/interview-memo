@@ -13,9 +13,9 @@ resource "cloudflare_ruleset" "ai_rate_limit" {
     action      = "block"
     ratelimit = {
       characteristics     = ["ip.src", "cf.colo.id"]
-      period              = 60
+      period              = 10
       requests_per_period = 6
-      mitigation_timeout  = 60
+      mitigation_timeout  = 10
     }
   }]
 }

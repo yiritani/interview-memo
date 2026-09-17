@@ -28,8 +28,10 @@ pnpm db:migrate:remote
 
 WorkerにはCloudflare Workers Rate Limiting bindingを設定し、AI生成をIP・Cloudflareロケーション単位で1分6回までに絞っています。アプリ側にも当日12回のブラウザガードと入力文字数上限があります。
 
-現在の公開先が `workers.dev` のため、ゾーンに紐づくWAFはまだ適用できません。独自ドメインをCloudflareのゾーンへ接続したら、`terraform.tfvars` の `cloudflare_zone_id` にゾーンIDを設定して `pnpm infra:plan` / `pnpm infra:apply` を実行してください。Terraformが `/api/ai/generate` のWAF rate limitを作成します。既存のゾーンRulesetをTerraformで管理している場合は、先に既存stateへimportしてください。
+`engineer-interview.online` をCloudflareのゾーンへ接続し、Workerには `app.engineer-interview.online` を紐付けています。Cloudflare Freeのゾーン側Rate Limitingで、`POST /api/ai/generate` を同一IPあたり6回 / 10秒、超過時10秒ブロックに設定しています。Worker側にも6回 / 60秒のRate Limiting bindingがあるため、二重にAI生成の使いすぎを抑えます。
 
-`workers_dev_enabled = true` で workers.dev の公開URLを有効にしています。独自ドメインを接続する場合は、公開URLを確認してからCloudflareのルート設定を追加してください。
+TerraformのWAF定義は `terraform.tfvars` の `cloudflare_zone_id` にゾーンIDを設定すると有効になります。今回のルールはCloudflareダッシュボードから先に有効化しています。Terraform stateへ取り込む場合は、Zone:Edit権限を持つAPIトークンで既存Rulesetをimportしてから `pnpm infra:plan` / `pnpm infra:apply` を実行してください。既存のゾーンRulesetをTerraformで管理している場合も、先に既存stateへimportしてください。
+
+`workers_dev_enabled = true` で workers.dev の公開URLを予備として残しています。通常の入口は `app.engineer-interview.online` です。CloudflareのカスタムドメインはWorkerダッシュボードで接続済みで、DNSの伝播後に利用できます。
 
 Terraform stateは初期段階のためローカル管理です。複数人やCIで運用する段階では、stateを共有できるバックエンドへ移行します。
