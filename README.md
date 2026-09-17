@@ -62,7 +62,7 @@ AI応答に使用量メタデータが含まれる場合は、画面に入力・
 
 PRを受け付けたい。でも、個人情報を抜かれるのは嫌なので、ログインは設けません。アカウントや個人情報を集める前提を作らず、変更はGitHub上で読める状態にします。個人情報を抜くための改修や、利用者に説明せず送信先を増やす改修は受け入れません。
 
-要望やバグはGitHub Issueへ、自分で直したい変更はPull Requestへ投稿してください。IssueやPRには個人情報、認証情報、非公開の求人情報を貼らないでください。リポジトリURLが決まったら、`.env` に `NEXT_PUBLIC_GITHUB_REPO_URL` を設定するとアプリ内の導線が有効になります。
+要望やバグは [GitHub Issue](https://github.com/yiritani/interview-memo/issues) へ、自分で直したい変更は Pull Request へ投稿してください。IssueやPRには個人情報、認証情報、非公開の求人情報を貼らないでください。アプリ内のIssue / PR導線は `https://github.com/yiritani/interview-memo` に接続しています。リポジトリを切り替える場合は `.env` の `NEXT_PUBLIC_GITHUB_REPO_URL` を変更してください。
 
 
 質問テンプレートには `source_name`、`source_url`、`source_fetched_at` を持たせています。求人レビューサイトなどの外部情報は、利用規約と著作権を確認したうえで、本文の丸ごと保存ではなく要約・出典 URL・取得日時を登録する方針です。

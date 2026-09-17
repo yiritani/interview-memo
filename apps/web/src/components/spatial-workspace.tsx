@@ -103,7 +103,7 @@ export function SpatialWorkspace({
   const [feedback, setFeedback] = useState("");
   const [feedbackStatus, setFeedbackStatus] = useState<"idle" | "saved">("idle");
   const templateCount = templates.length || fallbackInterviewQuestionTemplates.length;
-  const githubRepoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO_URL?.trim().replace(/\/$/, "") || null;
+  const githubRepoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO_URL?.trim().replace(/\/$/, "") || "https://github.com/yiritani/interview-memo";
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-workflow-scroll]");
