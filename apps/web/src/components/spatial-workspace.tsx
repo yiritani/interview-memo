@@ -60,7 +60,7 @@ function WorkflowProgress({
   const activeIndex = Math.max(0, workflowSteps.findIndex((step) => step.id === activeSectionId));
 
   return (
-    <nav aria-label="面接準備の進捗" className="sticky top-0 z-[60] border-b border-foreground/80 bg-background/95 backdrop-blur-sm">
+    <nav aria-label="面接準備の進捗" className="workflow-progress-bar sticky top-0 z-[60] border-b border-foreground/80 bg-background/95 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-5 py-3 sm:px-8 lg:px-12">
         <div className="flex items-center gap-4 text-[10px] tracking-[0.14em] uppercase">
           <span className="shrink-0 font-mono text-accent">Flow / {String(activeIndex).padStart(2, "0")} of {String(workflowSteps.length - 1).padStart(2, "0")}</span>
@@ -170,7 +170,7 @@ export function SpatialWorkspace({
       <Spotlight className="-top-12 left-1/2 h-[680px] w-[1100px] -translate-x-1/2" />
 
       <div className="relative mx-auto max-w-[1600px] px-5 pb-16 sm:px-8 lg:px-12">
-        <section className="workflow-section workflow-section--intro" data-workflow-section id="intro">
+        <section className="workflow-section workflow-section--intro spatial-section" data-workflow-section id="intro">
         <header className="flex items-center justify-between border-b border-border/80 py-5 text-xs tracking-[0.18em] text-muted-foreground uppercase">
           <div className="flex items-center gap-3 text-foreground">
             <span className="grid size-8 place-items-center border border-foreground text-[11px] font-semibold tracking-normal">
@@ -277,7 +277,7 @@ export function SpatialWorkspace({
         </p>
         </section>
 
-        <section aria-labelledby="about-app-title" className="workflow-section workflow-section--content min-w-0 border-t border-foreground py-10 sm:py-14" data-workflow-section id="about">
+        <section aria-labelledby="about-app-title" className="workflow-section workflow-section--content spatial-section min-w-0 border-t border-foreground py-10 sm:py-14" data-workflow-section id="about">
           <div className="grid gap-8 lg:grid-cols-[0.34fr_0.66fr] lg:gap-14">
             <div>
               <p className="font-mono text-[11px] tracking-[0.18em] text-accent uppercase">System / what it does</p>
@@ -293,15 +293,15 @@ export function SpatialWorkspace({
                 ターミナルのログを眺めるように、いま何を準備しているかを確認できます。急がず、一行ずつどうぞ。
               </p>
             </div>
-            <Terminal commands={appGuideCommands} outputs={appGuideOutputs} username="engineer" />
+            <Terminal className="depth-surface" commands={appGuideCommands} outputs={appGuideOutputs} username="engineer" />
           </div>
         </section>
 
-        <section className="border-t border-foreground" id="question-lab">
+        <section className="spatial-section border-t border-foreground" id="question-lab">
           <InterviewQuestionLab initialAnswers={initialAnswers} templates={templates} />
         </section>
 
-        <section className="workflow-section workflow-section--content workflow-section--tall grid border-t border-foreground lg:grid-cols-[1.35fr_0.65fr]" data-workflow-section id="review">
+        <section className="workflow-section workflow-section--content workflow-section--tall spatial-section grid border-t border-foreground lg:grid-cols-[1.35fr_0.65fr]" data-workflow-section id="review">
           <div className="min-w-0 lg:border-r lg:border-foreground">
             <div className="flex items-center justify-between border-b border-border py-5">
               <div className="flex items-center gap-3">
@@ -317,7 +317,7 @@ export function SpatialWorkspace({
               <div>
                 {entries.map((entry, index) => (
                   <motion.article
-                    className="note-row group grid grid-cols-[44px_1fr_28px] gap-4 border-b border-border py-6 transition-[padding,background-color] hover:bg-surface hover:pl-3"
+                    className="note-row depth-link group grid grid-cols-[44px_1fr_28px] gap-4 border-b border-border py-6 transition-[padding,background-color] hover:bg-surface hover:pl-3"
                     initial={{ opacity: 0, x: -12 }}
                     key={entry.id}
                     transition={{ delay: index * 0.06, duration: 0.35 }}
@@ -348,7 +348,7 @@ export function SpatialWorkspace({
               <Layers3 className="size-4" />
             </div>
             <CardContainer className="mt-8 w-full" containerClassName="w-full">
-              <CardBody className="border border-border bg-surface-strong p-6">
+              <CardBody className="depth-surface border border-border bg-surface-strong p-6">
                 <CardItem className="relative z-10" translateZ={38}>
                   <div className="flex items-center justify-between border-b border-border pb-5">
                     <span className="font-mono text-3xl tracking-[-0.08em]">{entries.length.toString().padStart(2, "0")}</span>
@@ -377,7 +377,7 @@ export function SpatialWorkspace({
           </aside>
         </section>
 
-        <section className="workflow-section workflow-section--content border-t border-foreground py-10 sm:py-14" data-workflow-section id="community">
+        <section className="workflow-section workflow-section--content spatial-section border-t border-foreground py-10 sm:py-14" data-workflow-section id="community">
           <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
             <div>
               <p className="font-mono text-[11px] tracking-[0.18em] text-accent uppercase">Build log / engineer made</p>
@@ -402,19 +402,19 @@ export function SpatialWorkspace({
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">画面とサーバーを TypeScript でつなぎ、型の迷子を減らします。迷子になったら検索します。</p>
               </div>
               <div className="border-t border-border pt-4">
+                <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">UI / depth</p>
+                <p className="mt-3 text-sm leading-6">Aceternity UI / Motion / 3D CSS</p>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">そもそもスタートは3D CSS FWを使ってみたいからなんとなくこのサービスを作りました。</p>
+              </div>
+              <div className="border-t border-border pt-4">
                 <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">Backend / typed</p>
                 <p className="mt-3 text-sm leading-6">Hono / Drizzle / Cloudflare D1</p>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">Hono RPC はフロントと API の口約束を型にします。口約束だけで本番へ行くと、だいたい後で会議が増えます。</p>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">Hono RPC はフロントと API の口約束を型にします。口約束だけで本番へ行くとだいたい後で会議が増えます。</p>
               </div>
               <div className="border-t border-border pt-4">
                 <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">AI / next</p>
                 <p className="mt-3 text-sm leading-6">質問の組立、回答の補助、回答内容の採点を、ボタン操作で必要な時だけ実行します。</p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">常時しゃべる AI は少し落ち着きがないので、呼ばれた時だけ働く方針です。</p>
-              </div>
-              <div className="border-t border-border pt-4">
-                <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">UI / depth</p>
-                <p className="mt-3 text-sm leading-6">Aceternity UI / Motion / 3D CSS</p>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">平らな管理画面を作るより、奥行きのあるUIを触りながら面接の記憶を組み立てたかったので、この形にしました。</p>
               </div>
               <div className="border-t border-accent/50 pt-4 sm:col-span-2">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -425,11 +425,11 @@ export function SpatialWorkspace({
                   <span className="text-[10px] tracking-[0.14em] text-muted-foreground uppercase">公開レビュー前提</span>
                 </div>
                 <p className="mt-3 max-w-2xl text-sm leading-6">
-                  PRを受け付けたい。でも、個人情報を抜かれるのは嫌なので、ログインは設けません。変更はGitHub上で読める状態にします。
-                  個人情報を抜くための改修や、こっそり送信先を増やす改修は受け入れません。OSSのコミット参加実績にでもしてください。
+                  PR受け付け中。
+                  個人情報を抜くための改修や、こっそり送信先を増やす改修は受け入れません。OSSの参加実績にでもしてください。
                 </p>
                 <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">
-                  要望やバグはIssueへ。自分で直したくなったらPRへ。投稿には個人情報・認証情報・非公開の求人情報を貼らないでください。
+                  PRには個人情報・認証情報・非公開の求人情報を貼らないでください。
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {githubRepoUrl ? (

@@ -2,6 +2,7 @@
 
 import { hc } from "hono/client";
 import { ArrowUpRight, Check, CircleAlert, ExternalLink, LoaderCircle, Save, ScanSearch, Trash2 } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -190,6 +191,7 @@ export function InterviewQuestionLab({
   const [generatedAnswers, setGeneratedAnswers] = useState<Record<string, string>>({});
   const [questionSummary, setQuestionSummary] = useState("");
   const [aiResult, setAiResult] = useState<AiResponse | null>(null);
+  const [reverseResultVersion, setReverseResultVersion] = useState(0);
   const [aiUsage, setAiUsage] = useState<AiUsage | undefined>();
   const [aiRequestCount, setAiRequestCount] = useState(getAiRequestCount);
   const [aiNeuronTotal, setAiNeuronTotal] = useState(getAiNeuronTotal);
@@ -200,6 +202,7 @@ export function InterviewQuestionLab({
     Object.fromEntries(Object.keys(initialAnswers).map((questionId) => [questionId, "saved"])) as Record<string, SaveState>,
   );
   const normalizedCareer = normalize(submittedCareer);
+  const reducedMotion = useReducedMotion() ?? false;
 
   useEffect(() => subscribeToAiRequestCount(setAiRequestCount), []);
   useEffect(() => subscribeToAiNeuronTotal(setAiNeuronTotal), []);
@@ -301,6 +304,7 @@ export function InterviewQuestionLab({
         })));
       } else {
         setAiResult(body);
+        setReverseResultVersion((current) => current + 1);
         setAiUsage(body.usage);
       }
       setAiState("idle");
@@ -322,7 +326,7 @@ export function InterviewQuestionLab({
           { text: "結果をワークスペースへ返しています" },
         ]}
       />
-      <section className="workflow-section workflow-section--content border-b border-border pb-8" data-workflow-section id="company-input">
+      <section className="workflow-section workflow-section--content spatial-section border-b border-border pb-8" data-workflow-section id="company-input">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
           <div>
             <p className="font-mono text-[11px] tracking-[0.18em] text-accent uppercase">01 / Question lab</p>
@@ -335,10 +339,10 @@ export function InterviewQuestionLab({
         <p className="font-mono text-xs text-accent">01 / COMPANY</p>
         <h3 className="mt-3 text-xl font-medium">受ける会社を知る</h3>
         <p className="mt-3 text-sm text-muted-foreground">会社概要や求人票を貼り付けてください。質問・回答・逆質問を考える材料にします。</p>
-        <Textarea aria-label="受ける会社や求人の情報" className="mt-4 min-h-32 bg-surface" maxLength={AI_INPUT_LIMITS.company} onChange={(event) => setCompanyContext(event.target.value)} placeholder="事業、募集背景、求める経験、開発体制、利用技術など" value={companyContext} />
+        <Textarea aria-label="受ける会社や求人の情報" className="depth-input mt-4 min-h-32 bg-surface" maxLength={AI_INPUT_LIMITS.company} onChange={(event) => setCompanyContext(event.target.value)} placeholder="事業、募集背景、求める経験、開発体制、利用技術など" value={companyContext} />
         <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground"><span>AIへの送信は生成・補助・採点ボタンを押した時だけ。会社情報は後から追記できます。</span><span className="shrink-0 font-mono">{companyContext.length.toLocaleString()} / {AI_INPUT_LIMITS.company.toLocaleString()}文字</span></div>
       </section>
-      <section className="workflow-section workflow-section--content min-w-0" data-workflow-section id="career-input">
+      <section className="workflow-section workflow-section--content spatial-section min-w-0" data-workflow-section id="career-input">
         <div className="flex items-center gap-2 text-xs tracking-[0.16em] text-muted-foreground uppercase">
           <ScanSearch className="size-4 text-accent" />
           02 / Career input
@@ -353,7 +357,7 @@ export function InterviewQuestionLab({
         </p>
         <Textarea
           aria-label="これまでの経歴"
-          className="mt-7 min-h-56 bg-surface"
+          className="depth-input mt-7 min-h-56 bg-surface"
           maxLength={AI_INPUT_LIMITS.career}
           onChange={(event) => setCareer(event.target.value)}
           placeholder="・プロダクトや担当領域\n・使った技術\n・数字で表せる成果\n・チームでの役割"
@@ -374,7 +378,7 @@ export function InterviewQuestionLab({
         ) : null}
       </section>
 
-      <section className="workflow-section workflow-section--content workflow-section--tall min-w-0" data-workflow-section id="question-workspace">
+      <section className="workflow-section workflow-section--content workflow-section--tall spatial-section min-w-0" data-workflow-section id="question-workspace">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-foreground pb-5">
           <div>
             <p className="font-mono text-[11px] tracking-[0.16em] text-accent uppercase">03 / Questions / {String(questions.length).padStart(2, "0")}</p>
@@ -407,7 +411,7 @@ export function InterviewQuestionLab({
                   <p className="mb-2 text-xs font-medium">回答の材料をメモする</p>
                   <Textarea
                     aria-label={`${question.category}の回答メモ`}
-                    className="min-h-28 bg-background/70 text-sm leading-6 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-[4px_4px_0_var(--shadow)] focus:-translate-y-0.5 focus:shadow-[6px_6px_0_var(--shadow)]"
+                    className="depth-input min-h-28 bg-background/70 text-sm leading-6 transition-[border-color,box-shadow,transform] hover:border-accent/60"
                     maxLength={AI_INPUT_LIMITS.answer}
                     onChange={(event) => setAnswer(question.id, event.target.value)}
                     placeholder="回答の材料を箇条書きで。担当したこと・自分の判断・成果など"
@@ -484,7 +488,7 @@ export function InterviewQuestionLab({
           <span className="size-1.5 bg-accent" /> メモ → 回答文を生成 → 生成前後を比較 → 補助・採点の順に、回答を磨いていきます。
         </p>
       </section>
-      <section className="workflow-section workflow-section--content border-t border-foreground pt-6" data-workflow-section id="reverse-questions">
+      <section className="workflow-section workflow-section--content spatial-section border-t border-foreground pt-6" data-workflow-section id="reverse-questions">
         <p className="font-mono text-xs text-accent">04 / REVERSE QUESTIONS</p>
         <h3 className="mt-3 text-xl font-medium">最後に、こちらから聞きたいことを。</h3>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">会社情報・経歴・準備した回答をもとに、応募者から面接官へ聞く、入社後の期待や働き方を確かめる逆質問を考えます。</p>
@@ -493,12 +497,50 @@ export function InterviewQuestionLab({
         </Button>
         <div aria-live="polite" className="mt-4">
           {aiMode === "reverse_questions" && aiState === "error" ? <p className="text-xs text-destructive">{aiError}</p> : null}
-          {aiResult ? <>
-            <p className="mb-2 text-[10px] text-muted-foreground">{aiResult.provider === "local-driver" || aiResult.provider === "local-fallback" ? "Local driver / クレジット消費なし" : "Workers AI / 使用量を受け取りました"} · 残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</p>
-            <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={aiResult.usage} />
-            <p className="text-xs leading-6 text-muted-foreground">{aiResult.summary}</p>
-            {aiResult.items.map((item, index) => <div className="mt-4 border-t border-border pt-4" key={index}><h4 className="text-sm font-medium">{item.title}</h4><p className="mt-2 text-sm leading-6">{item.body}</p></div>)}
-          </> : null}
+          {aiResult ? (
+            <motion.div
+              aria-label="逆質問の生成結果"
+              className="reverse-hit-card mt-5 p-5 sm:p-7"
+              initial={reducedMotion ? false : { opacity: 0, rotateX: -12, scale: 0.94, y: 24 }}
+              animate={reducedMotion ? undefined : { opacity: 1, rotateX: 0, scale: 1, y: 0 }}
+              key={reverseResultVersion}
+              transition={{ damping: 17, mass: 0.8, stiffness: 185, type: "spring" }}
+            >
+              <div className="reverse-hit-card__content">
+                <div className="flex flex-wrap items-start justify-between gap-5 border-b border-foreground/20 pb-5">
+                  <div>
+                    <p className="font-mono text-[10px] tracking-[0.2em] text-accent uppercase">Lucky find / reverse questions</p>
+                    <h4 className="mt-3 max-w-xl text-2xl leading-[0.98] font-medium tracking-[-0.06em] sm:text-4xl">面接の最後に、これを。</h4>
+                  </div>
+                </div>
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[10px] text-muted-foreground">
+                  <span>{aiResult.provider === "local-driver" || aiResult.provider === "local-fallback" ? "Local driver / クレジット消費なし" : "Workers AI / 使用量を受け取りました"}</span>
+                  <span className="font-mono text-accent">残り {Math.max(0, APP_AI_DAILY_REQUEST_LIMIT - aiRequestCount)} 回</span>
+                </div>
+                <AiUsageMeter neuronTotal={aiNeuronTotal} requestCount={aiRequestCount} usage={aiResult.usage} />
+                <p className="mt-5 max-w-2xl text-sm leading-6 text-muted-foreground">{aiResult.summary}</p>
+                <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                  {aiResult.items.map((item, index) => (
+                    <motion.article
+                      className="reverse-question-card"
+                      initial={reducedMotion ? false : { opacity: 0, rotateY: index % 2 === 0 ? -9 : 9, y: 16 }}
+                      animate={reducedMotion ? undefined : { opacity: 1, rotateY: 0, y: 0 }}
+                      key={`${reverseResultVersion}-${index}`}
+                      transition={{ delay: reducedMotion ? 0 : 0.12 + index * 0.1, damping: 18, mass: 0.55, stiffness: 210, type: "spring" }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">Q{String(index + 1).padStart(2, "0")} / ask</span>
+                        <ArrowUpRight className="size-4 text-accent" />
+                      </div>
+                      <h5 className="mt-4 text-sm font-semibold leading-6">{item.title}</h5>
+                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.body}</p>
+                      <span className="mt-5 inline-flex border border-accent/40 px-2 py-1 font-mono text-[9px] tracking-[0.14em] text-accent uppercase">bring this to the room</span>
+                    </motion.article>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ) : null}
         </div>
       </section>
     </div>

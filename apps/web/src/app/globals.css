@@ -11,6 +11,8 @@
   --accent: #c85634;
   --accent-foreground: #fff8ee;
   --shadow: #b9b0a0;
+  --shadow-deep: #8f8779;
+  --grid-line: color-mix(in srgb, var(--foreground) 8%, transparent);
 }
 
 @theme inline {
@@ -47,9 +49,26 @@
 
 body {
   margin: 0;
-  background: var(--background);
+  min-width: 320px;
+  background-color: var(--background);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-position: center top;
+  background-size: 48px 48px;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 12% 6%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 28%),
+    radial-gradient(circle at 88% 72%, color-mix(in srgb, var(--surface-strong) 38%, transparent), transparent 32%);
 }
 
 html {
@@ -67,7 +86,189 @@ button:not(:disabled),
 }
 
 .question-card {
-  transition: opacity 180ms ease, transform 180ms ease;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  transition: opacity 180ms ease, transform 240ms ease;
+}
+
+.question-card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 10px -8px -8px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  pointer-events: none;
+  content: "";
+  transform: translateZ(-20px);
+  transition: transform 240ms ease, opacity 240ms ease;
+}
+
+.question-card > div {
+  transform: translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 240ms ease, box-shadow 240ms ease, background-color 240ms ease;
+}
+
+.question-card:hover > div,
+.question-card:focus-within > div {
+  transform: translateY(-5px) rotateX(1deg) rotateY(-1deg) translateZ(12px);
+  box-shadow: 12px 14px 0 var(--shadow-deep);
+}
+
+.question-card:hover::before,
+.question-card:focus-within::before {
+  opacity: 0.8;
+  transform: translate(3px, 3px) translateZ(-20px);
+}
+
+.workflow-scroll {
+  perspective: 1800px;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--surface) 72%, transparent), transparent 34rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, transparent), var(--background));
+  transform-style: preserve-3d;
+}
+
+.workflow-progress-bar {
+  isolation: isolate;
+  transform: translateZ(28px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 70%, transparent), 0 9px 22px color-mix(in srgb, var(--shadow-deep) 20%, transparent);
+}
+
+.spatial-section {
+  isolation: isolate;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.spatial-section::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0.75rem -0.5rem -0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  pointer-events: none;
+  content: "";
+  transform: translateZ(-18px);
+}
+
+.depth-surface {
+  position: relative;
+  transform: translateZ(0);
+  transform-style: preserve-3d;
+  box-shadow: 8px 10px 0 var(--shadow);
+  transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+}
+
+.depth-surface::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent);
+  content: "";
+  transform: translate(7px, 8px) translateZ(-12px);
+}
+
+.depth-surface:hover,
+.depth-surface:focus-within {
+  transform: translateY(-4px) rotateX(0.5deg) rotateY(-0.5deg) translateZ(8px);
+  box-shadow: 12px 15px 0 var(--shadow-deep);
+}
+
+.depth-input {
+  transform: translateZ(0);
+  box-shadow: 4px 5px 0 color-mix(in srgb, var(--shadow) 62%, transparent);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.depth-input:hover,
+.depth-input:focus {
+  transform: translateY(-2px) translateZ(6px);
+  box-shadow: 7px 8px 0 var(--shadow);
+}
+
+.depth-link {
+  transition: transform 180ms ease, color 180ms ease, background-color 180ms ease;
+}
+
+.depth-link:hover,
+.depth-link:focus-visible {
+  transform: translateX(3px) translateZ(5px);
+}
+
+@keyframes reverse-hit-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-150%) skewX(-18deg);
+  }
+
+  18% {
+    opacity: 0.9;
+  }
+
+  68%,
+  100% {
+    opacity: 0;
+    transform: translateX(360%) skewX(-18deg);
+  }
+}
+
+.reverse-hit-card {
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--foreground);
+  background:
+    radial-gradient(circle at 88% 4%, color-mix(in srgb, var(--accent) 17%, transparent), transparent 13rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 88%, white), var(--surface-strong));
+  box-shadow: 12px 14px 0 var(--shadow-deep);
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.reverse-hit-card::before {
+  position: absolute;
+  z-index: 2;
+  top: -40%;
+  bottom: -40%;
+  left: 0;
+  width: 22%;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, white 68%, transparent), transparent);
+  filter: blur(2px);
+  animation: reverse-hit-sweep 1.15s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.reverse-hit-card::after {
+  position: absolute;
+  z-index: -1;
+  inset: 10px -10px -10px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
+  content: "";
+  transform: translateZ(-20px);
+}
+
+.reverse-hit-card__content {
+  position: relative;
+  z-index: 3;
+}
+
+.reverse-question-card {
+  position: relative;
+  min-height: 11rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 74%, transparent);
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+  padding: 1rem;
+  transform-style: preserve-3d;
+  box-shadow: 5px 6px 0 color-mix(in srgb, var(--shadow) 82%, transparent);
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.reverse-question-card:hover,
+.reverse-question-card:focus-within {
+  background: var(--surface);
+  box-shadow: 8px 10px 0 var(--shadow-deep);
+  transform: translateY(-4px) rotateY(-1deg) translateZ(9px);
 }
 
 .workflow-scroll {
@@ -102,5 +303,20 @@ button:not(:disabled),
 
   .workflow-scroll {
     scroll-snap-type: y proximity;
+  }
+
+  .question-card,
+  .question-card > div,
+  .depth-surface,
+  .depth-input,
+  .depth-link,
+  .reverse-hit-card,
+  .reverse-question-card {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .reverse-hit-card::before {
+    animation: none !important;
   }
 }
